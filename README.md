@@ -31,9 +31,9 @@ MVC 패턴을 사용하여 ..
 2. 게시물 등록 <br/>
 ![CreatePlan](./img/add.PNG)
 3. 게시물 읽기 <br/>
-![CreatePlan](./img/read.PNG)
+![CreatePlan](./img/view.PNG)
 4. 게시물 삭제 <br/>
-![CreatePlan](./img/delete.PNG)
+![CreatePlan](./img/remove.PNG)
 
 ### 구현된 기능
 *** 
