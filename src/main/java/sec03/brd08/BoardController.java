@@ -24,6 +24,10 @@ import org.apache.commons.io.FileUtils;
 
 @WebServlet("/board/*")
 public class BoardController extends HttpServlet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static String ARTICLE_IMAGE_REPO = "C:\\board\\article_image";
 	BoardService boardService;
 	ArticleVO articleVO;
@@ -42,12 +46,14 @@ public class BoardController extends HttpServlet {
 	}
 
 	private void doHandle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		String nextPage = "";
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8");
 		HttpSession session;
 		String action = request.getPathInfo();
 		System.out.println("action:" + action);
+		
 		try {
 			List<ArticleVO> articlesList = new ArrayList<ArticleVO>();
 			

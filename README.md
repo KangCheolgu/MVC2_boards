@@ -39,7 +39,15 @@ MVC 패턴을 사용하여 ..
 *** 
 1. CRUD 기능
 2. 페이징 기능
-3. 댓글 쓰기
+3. 답글 쓰기
+
+### 실행 화면
+***
+1. 리스트 화면 <br />
+![CreatePlan](./img/listarticles.png)
+
+2. 게시물 읽기 화면 <br />
+![CreatePlan](./img/viewarticle.png)
 
 ### 해결해야 할 문제
 ***
