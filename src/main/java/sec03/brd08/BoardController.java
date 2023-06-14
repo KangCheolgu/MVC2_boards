@@ -50,76 +50,116 @@ public class BoardController extends HttpServlet {
 		System.out.println("action:" + action);
 		try {
 			List<ArticleVO> articlesList = new ArrayList<ArticleVO>();
+			
 			if (action==null){	
-				String _section=request.getParameter("section");
-				String _pageNum=request.getParameter("pageNum");
+				
+				// 페이징 값 선언
+				String _section = request.getParameter("section");
+				String _pageNum = request.getParameter("pageNum");
+
+				// null 일시 페이징값 1로 설정
 				int section = Integer.parseInt(((_section==null)? "1":_section) );
 				int pageNum = Integer.parseInt(((_pageNum==null)? "1":_pageNum));
+
+				// 매개변수로 페이징 값 설정
 				Map<String, Integer> pagingMap = new HashMap<String, Integer>();
 				pagingMap.put("section", section);
 				pagingMap.put("pageNum", pageNum);
-				Map articlesMap=boardService.listArticles(pagingMap);
+				
+				// 설정한 페이징 값의 리스트 내용 불러오기
+				Map<String, Integer> articlesMap = boardService.listArticles(pagingMap);
 				articlesMap.put("section", section);
 				articlesMap.put("pageNum", pageNum);
+				
+				// jsp에 세팅
 				request.setAttribute("articlesMap", articlesMap);
-				nextPage = "/board07/ listArticles.jsp";
-				}else if(action.equals("/listArticles.do")){  			
-				String _section=request.getParameter("section");
-				String _pageNum=request.getParameter("pageNum");
+				// 다음 페이지 값
+				nextPage = "/board07/listArticles.jsp";
+				
+				} else if (action.equals("/listArticles.do")){ 
+					
+				String _section = request.getParameter("section");
+				String _pageNum = request.getParameter("pageNum");
+
 				int section = Integer.parseInt(((_section==null)? "1":_section) );
 				int pageNum = Integer.parseInt(((_pageNum==null)? "1":_pageNum));
-				Map pagingMap=new HashMap();
+
+				Map<String, Integer> pagingMap = new HashMap<String, Integer>();
 				pagingMap.put("section", section);
 				pagingMap.put("pageNum", pageNum);
-				Map articlesMap=boardService.listArticles(pagingMap);
+
+				Map<String, Integer> articlesMap = boardService.listArticles(pagingMap);
 				articlesMap.put("section", section);
 				articlesMap.put("pageNum", pageNum);
+				
 				request.setAttribute("articlesMap", articlesMap);
 				nextPage = "/board07/listArticles.jsp";
+
 			} else if (action.equals("/articleForm.do")) {
 				nextPage = "/board07/articleForm.jsp";
+				
 			} else if (action.equals("/addArticle.do")) {
+				
 				int articleNO = 0;
+				
+				//파일 업로드
+				//upload 매소드를 사용하여 이미지를 temp 폴더에 저장하고 map에 title, imageFileName, content 를 세팅한뒤 전달
 				Map<String, String> articleMap = upload(request, response);
 				String title = articleMap.get("title");
 				String content = articleMap.get("content");
 				String imageFileName = articleMap.get("imageFileName");
 
+				//map에서 저장할 내용 세팅 후 저장
 				articleVO.setParentNO(0);
 				articleVO.setId("hong");
 				articleVO.setTitle(title);
 				articleVO.setContent(content);
 				articleVO.setImageFileName(imageFileName);
 				articleNO = boardService.addArticle(articleVO);
+
+				// 이미지 파일 temp 폴더에서 옮기기
 				if (imageFileName != null && imageFileName.length() != 0) {
 					File srcFile = new File(ARTICLE_IMAGE_REPO + "\\" + "temp" + "\\" + imageFileName);
 					File destDir = new File(ARTICLE_IMAGE_REPO + "\\" + articleNO);
 					destDir.mkdirs();
 					FileUtils.moveFileToDirectory(srcFile, destDir, true);
 				}
+				
+				//페이지 이동 및 alert 창 출력
 				PrintWriter pw = response.getWriter();
 				pw.print("<script>" + "  alert('새글을 추가했습니다.');" + " location.href='" + request.getContextPath()
 						+ "/board/listArticles.do';" + "</script>");
 
 				return;
+
 			} else if (action.equals("/viewArticle.do")) {
+				// 게시물 번호 세팅
 				String articleNO = request.getParameter("articleNO");
+				
+				// 번호를 통해 검색하여
 				articleVO = boardService.viewArticle(Integer.parseInt(articleNO));
+				
+				// 해당 번호에 대한 게시물을 출력
 				request.setAttribute("article", articleVO);
 				nextPage = "/board07/viewArticle.jsp";
+				
 			} else if (action.equals("/modArticle.do")) {
+				
 				Map<String, String> articleMap = upload(request, response);
+		
 				int articleNO = Integer.parseInt(articleMap.get("articleNO"));
 				articleVO.setArticleNO(articleNO);
 				String title = articleMap.get("title");
 				String content = articleMap.get("content");
 				String imageFileName = articleMap.get("imageFileName");
+				
 				articleVO.setParentNO(0);
 				articleVO.setId("hong");
 				articleVO.setTitle(title);
 				articleVO.setContent(content);
 				articleVO.setImageFileName(imageFileName);
 				boardService.modArticle(articleVO);
+				
 				if (imageFileName != null && imageFileName.length() != 0) {
 					String originalFileName = articleMap.get("originalFileName");
 					File srcFile = new File(ARTICLE_IMAGE_REPO + "\\" + "temp" + "\\" + imageFileName);
@@ -134,25 +174,38 @@ public class BoardController extends HttpServlet {
 				pw.print("<script>" + "  alert('글을 수정했습니다.');" + " location.href='" + request.getContextPath()
 						+ "/board/viewArticle.do?articleNO=" + articleNO + "';" + "</script>");
 				return;
+				
 			} else if (action.equals("/removeArticle.do")) {
+				
+				// 번호 값 get
 				int articleNO = Integer.parseInt(request.getParameter("articleNO"));
+				
+				// get 한 번호값을 통해 삭제
 				List<Integer> articleNOList = boardService.removeArticle(articleNO);
+				
+				// 이미지 폴더 삭제
 				for (int _articleNO : articleNOList) {
 					File imgDir = new File(ARTICLE_IMAGE_REPO + "\\" + _articleNO);
 					if (imgDir.exists()) {
 						FileUtils.deleteDirectory(imgDir);
 					}
 				}
-
+				
+				// 페이지 이동 및 alert 창 출력
 				PrintWriter pw = response.getWriter();
 				pw.print("<script>" + "  alert('글을 삭제했습니다.');" + " location.href='" + request.getContextPath()
 						+ "/board/listArticles.do';" + "</script>");
 				return;
 
 			} else if (action.equals("/replyForm.do")) {
+				
+				//답변을 달 게시물의 번호 get
 				int parentNO = Integer.parseInt(request.getParameter("parentNO"));
+
+				
 				session = request.getSession();
 				session.setAttribute("parentNO", parentNO);
+				
 				nextPage = "/board07/replyForm.jsp";
 			} else if (action.equals("/addReply.do")) {
 				session = request.getSession();
