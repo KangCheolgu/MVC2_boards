@@ -27,13 +27,13 @@ MVC 패턴을 사용하여 ..
 ***
 ### 핵심 소스코드
 1. list 불러오기 <br/>
-![CreatePlan](./img/list.PNG)
+![CreatePlan](./img/list.png)
 2. 게시물 등록 <br/>
-![CreatePlan](./img/add.PNG)
+![CreatePlan](./img/add.png)
 3. 게시물 읽기 <br/>
-![CreatePlan](./img/view.PNG)
+![CreatePlan](./img/view.png)
 4. 게시물 삭제 <br/>
-![CreatePlan](./img/remove.PNG)
+![CreatePlan](./img/remove.png)
 
 ### 구현된 기능
 *** 
