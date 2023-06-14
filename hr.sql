@@ -54,7 +54,7 @@ commit;
 
 select * from t_board;
 
-select level, articleNO, parentNO, LPAD(' ', $*(LEVEL-1)) || title title, content, writeDate, id
+select level, articleNO, parentNO, LPAD(' ', 4*(LEVEL-1)) || title title, content, writeDate, id
 from t_board
 start with parentNO = 0
 connect by prior articleNO=parentNO
